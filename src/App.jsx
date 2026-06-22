@@ -1,11 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Menu, X, ChevronRight, ChevronLeft, Star, Quote,
-  Briefcase, TrendingUp, Award, Calendar, Users, ArrowUp,
+  Award, Calendar, Users, ArrowUp,
   GraduationCap, Globe, ShieldCheck, Zap, MessageCircle,
-  Target, Eye, CheckCircle, Sparkles, Clock, Gem
+  Target, Eye, CheckCircle, Sparkles, Clock, Gem, Video, ChevronDown,
+  Play, ShoppingCart, Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { coursesData, getCourseById } from './data/courses';
+import EscuelasPage from './pages/EscuelasPage';
+import EscuelaIAPage from './pages/EscuelaIAPage';
+import EscuelaRedesPage from './pages/EscuelaRedesPage';
+import EscuelaEjecutivoPage from './pages/EscuelaEjecutivoPage';
+
 
 const Footer = () => (
   <footer>
@@ -64,6 +71,110 @@ const Footer = () => (
     </div>
   </footer>
 );
+
+const Header = ({ activePage, isScrolledExternal }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolledInternal, setIsScrolledInternal] = useState(false);
+  const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolledInternal(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isScrolled = isScrolledExternal !== undefined ? isScrolledExternal : isScrolledInternal;
+
+  return (
+    <header style={{ 
+      background: isScrolled ? 'rgba(7, 11, 20, 0.95)' : 'transparent', 
+      boxShadow: isScrolled ? '0 4px 20px rgba(0,0,0,0.5)' : 'none',
+      borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 100,
+      transition: 'all 0.3s ease'
+    }}>
+      <div className="container nav-container">
+        <div className="logo">
+          <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img src="/logo.png" alt="Canal Ejecutivo" style={{ height: '40px', objectFit: 'contain' }} />
+          </a>
+        </div>
+        <nav className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+          <a 
+            href="#" 
+            className={activePage === 'inicio' ? 'active' : ''} 
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Inicio
+          </a>
+          <a 
+            href="#nosotros" 
+            className={activePage === 'nosotros' ? 'active' : ''} 
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Nosotros
+          </a>
+          
+          {/* Dropdown for Programas */}
+          <div className="nav-dropdown">
+            <button 
+              className={`nav-dropdown-trigger ${activePage === 'envivo' || activePage === 'asincronicos' ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileSubmenuOpen(!mobileSubmenuOpen);
+              }}
+            >
+              Programas <ChevronDown size={14} />
+            </button>
+            <div className={`nav-dropdown-menu ${mobileSubmenuOpen ? 'mobile-show' : ''}`}>
+              <a 
+                href="#programas-envivo" 
+                className={activePage === 'envivo' ? 'active' : ''} 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setMobileSubmenuOpen(false);
+                }}
+              >
+                En vivo
+              </a>
+              <a 
+                href="#programas-asincronicos" 
+                className={activePage === 'asincronicos' ? 'active' : ''} 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setMobileSubmenuOpen(false);
+                }}
+              >
+                Asincrónicos
+              </a>
+            </div>
+          </div>
+
+          <a 
+            href="#escuelas" 
+            className={activePage === 'escuelas' ? 'active' : ''} 
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Escuelas
+          </a>
+
+          <a href="#aliados" onClick={() => setMobileMenuOpen(false)}>Aliados</a>
+          <a href="#testimonios" onClick={() => setMobileMenuOpen(false)}>Testimonios</a>
+          <a href="https://campus.canalejecutivo.com/" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '0.5rem 1.2rem' }}>Aula virtual</a>
+        </nav>
+        <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+    </header>
+  );
+};
 
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -495,8 +606,6 @@ const TermsPage = () => {
 };
 
 const NosotrosPage = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
@@ -509,26 +618,7 @@ const NosotrosPage = () => {
 
   return (
     <>
-      <header style={{ background: 'rgba(7, 11, 20, 0.95)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
-        <div className="container nav-container">
-          <div className="logo">
-            <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img src="/logo.png" alt="Canal Ejecutivo" style={{ height: '40px', objectFit: 'contain' }} />
-            </a>
-          </div>
-          <nav className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-            <a href="#" onClick={() => setMobileMenuOpen(false)}>Inicio</a>
-            <a href="#nosotros" className="active" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
-            <a href="#cursos" onClick={() => setMobileMenuOpen(false)}>Cursos</a>
-            <a href="#aliados" onClick={() => setMobileMenuOpen(false)}>Aliados</a>
-            <a href="#testimonios" onClick={() => setMobileMenuOpen(false)}>Testimonios</a>
-            <a href="https://campus.canalejecutivo.com/" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '0.5rem 1.2rem' }}>Aula virtual</a>
-          </nav>
-          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </header>
+      <Header activePage="nosotros" />
 
       {/* Main Container */}
       <motion.div
@@ -871,7 +961,6 @@ const NosotrosPage = () => {
 };
 
 const CourseDetailsPage = ({ courseId }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeModule, setActiveModule] = useState(null);
 
   const containerVariants = {
@@ -884,98 +973,32 @@ const CourseDetailsPage = ({ courseId }) => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
   };
 
-  const courseInfo = {
-    title: courseId === 'crea-dashboard-ia' ? 'CREA DASHBOARD PROFESIONALES CON IA' :
-      courseId === 'habilidades-alto-impacto' ? 'HABILIDADES DE ALTO IMPACTO' :
-        'ADMINISTRACIÓN DE WINDOWS SERVER 2019',
-    description: courseId === 'crea-dashboard-ia'
-      ? 'Domina la creación de dashboards profesionales con Inteligencia Artificial y transforma datos en decisiones estratégicas. En este curso aprenderás a diseñar paneles modernos, visuales e interactivos aplicados a entornos corporativos reales, utilizando herramientas actuales y automatización con IA.'
-      : courseId === 'admin-windows-server' 
-      ? 'Capacitar al participante en la instalación, configuración y administración de entornos Windows Server, incluyendo virtualización, Active Directory, servicios de red, administración remota, políticas de seguridad y servicios empresariales.'
-      : 'El curso certificado te permitirá comprender los fundamentos y aplicaciones prácticas para transformar tu carrera con soluciones innovadoras. A través de este programa, aprenderás a implementar proyectos reales que impulsen tu crecimiento profesional en entornos corporativos.',
-    instructor: courseId === 'crea-dashboard-ia' ? 'Jeferson Dilas' : courseId === 'admin-windows-server' ? 'Juan Efio' : 'Christian Flores',
-    instructorTitle: courseId === 'admin-windows-server' ? 'Docente de Redes' : 'Especialista en la materia',
-    regularPrice: 'S/ 200',
-    salePrice: 'S/ 100',
-    discount: '50% dscto',
-    students: courseId === 'crea-dashboard-ia' ? '295' : '262',
-    schedule: courseId === 'crea-dashboard-ia' ? '19:00:00 - 21:00:00' : courseId === 'admin-windows-server' ? '21:00:00 - 23:00:00' : 'Por definir',
-    sessions: courseId === 'crea-dashboard-ia' ? '03 sesiones' : courseId === 'admin-windows-server' ? '05 sesiones' : 'Por definir',
-    frequency: courseId === 'crea-dashboard-ia' ? 'Jueves' : courseId === 'admin-windows-server' ? 'Miércoles' : 'Por definir',
-    image: courseId === 'crea-dashboard-ia' ? '/dasboarhimagen.png' :
-      courseId === 'habilidades-alto-impacto' ? 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=1200' :
-        '/servidor-e1557165670831.jpg',
-    methodology: courseId === 'admin-windows-server' 
-      ? ['Clases demostrativas en vivo', 'Laboratorios prácticos guiados', 'Resolución de casos reales', 'Implementación paso a paso de servicios empresariales'] 
-      : [],
-    requirements: courseId === 'admin-windows-server' 
-      ? ['Conocimientos básicos de redes', 'Conocimientos básicos de sistemas operativos Windows', 'PC con mínimo 8 GB RAM (recomendado 16 GB)', 'Software de virtualización (Hyper-V, VMware o VirtualBox)'] 
-      : ['Conexión a internet estable para acceder al campus virtual.', 'Ganas de aprender y transformar tu carrera profesional.', 'No requieres conocimientos técnicos previos.'],
-    tools: courseId === 'admin-windows-server' 
-      ? ['Windows Server', 'Hyper-V', 'Windows Admin Center'] 
-      : []
-  };
+  const courseInfo = getCourseById(courseId);
 
-  const windowsServerModules = [
-    { title: 'Clase 1 – Introducción e Instalación de Windows Server', content: '1. Introducción a Windows Server y su uso empresarial\n2. Versiones y ediciones de Windows Server\n3. Requisitos de hardware y planificación de instalación\n4. Introducción a la virtualización con Hyper-V\n5. Creación de máquinas virtuales\n6. Instalación de Windows Server paso a paso\n7. Configuración inicial del sistema operativo\n8. Uso del Administrador del Servidor (Server Manager)\n9. Roles y características de Windows Server\n10. Administración básica de discos y almacenamiento' },
-    { title: 'Clase 2 – Active Directory y Administración de Usuarios', content: '1. Fundamentos de Active Directory\n2. Conceptos de dominio, bosque y controlador de dominio\n3. Instalación y configuración de Active Directory Domain Services (AD DS)\n4. Promoción de un servidor a Controlador de Dominio\n5. Gestión de usuarios y grupos\n6. Creación y administración de Unidades Organizativas (OU)\n7. Administración de equipos dentro del dominio\n8. Introducción a Group Policy Objects (GPO)\n9. Implementación de políticas de seguridad y restricciones' },
-    { title: 'Clase 3 – Servicios de Red en Windows Server', content: '1. Introducción a servicios de red empresariales\n2. Instalación y administración de DNS\n3. Zonas directas e inversas\n4. Resolución de nombres y diagnóstico DNS\n5. Instalación y configuración de DHCP\n6. Reservas y exclusiones DHCP\n7. Integración DHCP con Active Directory\n8. Compartición de carpetas y permisos NTFS\n9. Administración de recursos compartidos\n10. Introducción a servicios de impresión' },
-    { title: 'Clase 4 – Administración y Seguridad del Servidor', content: '1. Administración remota de servidores\n2. Windows Admin Center y herramientas RSAT\n3. Escritorio Remoto (RDP y RDS)\n4. Monitoreo del rendimiento del servidor\n5. Visor de eventos y diagnóstico de errores\n6. Configuración de Firewall de Windows Server\n7. Políticas de seguridad avanzadas\n8. Introducción a PowerShell para administración\n9. Automatización básica de tareas administrativas' },
-    { title: 'Clase 5 – Virtualización, Backup y Proyecto Final', content: '1. Administración avanzada de Hyper-V\n2. Creación y administración de snapshots/checkpoints\n3. Backup y restauración en Windows Server\n4. Estrategias de recuperación ante desastres\n5. Buenas prácticas de administración de servidores\n6. Optimización y mantenimiento preventivo\n7. Integración de servicios empresariales\n8. Implementación de un entorno corporativo completo' }
-  ];
+  if (!courseInfo) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#070b14', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white', flexDirection: 'column' }}>
+        <h2>Curso no encontrado</h2>
+        <a href="#" className="btn btn-primary" style={{ marginTop: '1rem' }}>Volver al Inicio</a>
+      </div>
+    );
+  }
 
-  const dashboardIAModules = [
-    { title: 'Clase 1 - Fundamentos de IA y Seguridad', content: '1. ¿Qué es un prompt y cómo estructurarlo correctamente?\n2. Tipos de Inteligencia Artificial aplicados al análisis de datos.\n3. Herramientas de IA especializadas para la generación de dashboards.\n4. Mejores prácticas de seguridad y privacidad en dashboards.' },
-    { title: 'Clase 2 - Gestión de Datos y Conexiones', content: '1. Conexión de dashboards a Google Sheets en tiempo real.\n2. Carga y procesamiento de datos de forma local (archivos Excel/CSV).\n3. Introducción y configuración de Supabase como base de datos (BaaS).\n4. Estructuración de datos para un rendimiento óptimo.' },
-    { title: 'Clase 3 - Proyecto Final y Funcionalidades Avanzadas', content: '1. Desarrollo de proyecto final interactivo con operaciones CRUD.\n2. Implementación de sistema de Autenticación (Login).\n3. Diseño e integración de gráficos de alto impacto visual.\n4. Generación y exportación de reportes automáticos en Excel y PDF.' }
-  ];
-
-  const defaultModules = [
-    { title: 'Módulo 1: Introducción y Fundamentos', content: '• Historia y evolución de las herramientas\n• Panorama empresarial actual\n• El futuro en las distintas disciplinas' },
-    { title: 'Módulo 2: Creación de Soluciones Propias', content: '• Construcción de herramientas eficientes\n• Identificación de oportunidades en diversos mercados\n• Visión estratégica' },
-    { title: 'Módulo 3: Implementación y Casos Prácticos', content: '• Análisis de procesos y métricas\n• Identificación de oportunidades de mejora operativa\n• Automatización de procesos' },
-    { title: 'Módulo 4: Consideraciones y Ética', content: '• Principios éticos en el desarrollo\n• Legislación actual y futura\n• Cumplimiento y responsabilidad' },
-    { title: 'Módulo 5: Proyecto Final', content: '• Diseño de soluciones para empresas\n• Presentación de resultados\n• Retroalimentación' }
-  ];
-
-  const modules = courseId === 'admin-windows-server' 
-    ? windowsServerModules 
-    : courseId === 'crea-dashboard-ia' 
-      ? dashboardIAModules 
-      : defaultModules;
+  const isLive = !courseInfo.modality.includes('Grabado');
 
   return (
     <>
-      <header style={{ background: 'rgba(7, 11, 20, 0.95)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
-        <div className="container nav-container">
-          <div className="logo">
-            <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img src="/logo.png" alt="Canal Ejecutivo" style={{ height: '40px', objectFit: 'contain' }} />
-            </a>
-          </div>
-          <nav className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-            <a href="#" onClick={() => setMobileMenuOpen(false)}>Inicio</a>
-            <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
-            <a href="#cursos" onClick={() => setMobileMenuOpen(false)}>Cursos</a>
-            <a href="#aliados" onClick={() => setMobileMenuOpen(false)}>Aliados</a>
-            <a href="#testimonios" onClick={() => setMobileMenuOpen(false)}>Testimonios</a>
-            <a href="https://campus.canalejecutivo.com/" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '0.5rem 1.2rem' }}>Aula virtual</a>
-          </nav>
-          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </header>
+      <Header activePage={isLive ? 'envivo' : 'asincronicos'} />
 
       <div style={{ minHeight: '100vh', paddingTop: '80px', paddingBottom: '80px', background: '#070b14' }}>
 
         {/* Cover Image */}
-        <div style={{ width: '100%', height: '45vh', backgroundImage: `url(${courseInfo.image})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+        <div style={{ width: '100%', height: '45vh', backgroundImage: `url(${courseInfo.img})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #070b14 0%, rgba(7,11,20,0.6) 100%)' }}></div>
         </div>
 
         <div className="container" style={{ marginTop: '-12vh', position: 'relative', zIndex: 10 }}>
-          <a href="#cursos" style={{ color: 'var(--primary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginBottom: '1.5rem', fontWeight: 600, background: 'rgba(7,11,20,0.8)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <a href={isLive ? '#programas-envivo' : '#programas-asincronicos'} style={{ color: 'var(--primary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginBottom: '1.5rem', fontWeight: 600, background: 'rgba(7,11,20,0.8)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
             <ChevronLeft size={20} style={{ marginRight: '0.5rem' }} /> Volver a cursos
           </a>
 
@@ -992,7 +1015,7 @@ const CourseDetailsPage = ({ courseId }) => {
             {/* Left Column: Info */}
             <div>
               <motion.div variants={itemVariants} className="course-info-card">
-                <span className="premium-badge">Curso de Extensión Profesional</span>
+                <span className="premium-badge">{isLive ? 'Curso de Extensión Profesional' : 'Curso Grabado Autoinstructivo'}</span>
 
                 <h1 className="course-info-title">{courseInfo.title}</h1>
                 <p className="course-info-desc">
@@ -1000,36 +1023,46 @@ const CourseDetailsPage = ({ courseId }) => {
                 </p>
 
                 {/* Instructor */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', width: 'fit-content' }}>
-                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', color: 'white', fontWeight: 'bold', boxShadow: '0 4px 10px rgba(10, 102, 255, 0.2)' }}>
-                    {courseInfo.instructor.charAt(0)}
+                {courseInfo.instructor && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', width: 'fit-content' }}>
+                    <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', color: 'white', fontWeight: 'bold', boxShadow: '0 4px 10px rgba(10, 102, 255, 0.2)' }}>
+                      {courseInfo.instructor.charAt(0)}
+                    </div>
+                    <div style={{ paddingRight: '1rem' }}>
+                      <h3 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.1rem', fontWeight: 600 }}>{courseInfo.instructor}</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>{courseInfo.instructorTitle}</p>
+                    </div>
                   </div>
-                  <div style={{ paddingRight: '1rem' }}>
-                    <h3 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.1rem', fontWeight: 600 }}>{courseInfo.instructor}</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>{courseInfo.instructorTitle}</p>
-                  </div>
-                </div>
+                )}
 
                 {/* Stats / Social Proof */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--text-muted)', fontSize: '1rem', padding: '1rem', background: 'rgba(10, 102, 255, 0.05)', borderRadius: '12px', border: '1px solid rgba(10, 102, 255, 0.1)', marginBottom: '1.5rem' }}>
                   <Users size={24} color="var(--primary)" />
-                  <span><strong style={{ color: 'white' }}>{courseInfo.students} alumnos</strong> se inscribieron en las últimas 24 horas.</span>
+                  <span><strong style={{ color: 'white' }}>{courseInfo.students} alumnos</strong> se inscribieron recientemente.</span>
                 </div>
 
                 {/* Course Details (Schedule, Sessions, Frequency) */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '1.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <Calendar size={20} color="var(--accent)" />
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Inicio</div>
+                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.startDate}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <Clock size={20} color="var(--accent)" />
                     <div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Horario</div>
-                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.schedule}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{isLive ? 'Horario' : 'Duración'}</div>
+                      <div style={{ color: 'white', fontWeight: 600 }}>{isLive ? courseInfo.schedule : courseInfo.duration}</div>
                     </div>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <Target size={20} color="var(--accent)" />
                     <div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sesiones</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Contenido</div>
                       <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.sessions}</div>
                     </div>
                   </div>
@@ -1041,13 +1074,21 @@ const CourseDetailsPage = ({ courseId }) => {
                       <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.frequency}</div>
                     </div>
                   </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <Video size={20} color="var(--accent)" />
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Modalidad</div>
+                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.modality}</div>
+                    </div>
+                  </div>
                 </div>
 
               </motion.div>
 
 
               {/* Methodology */}
-              {courseInfo.methodology.length > 0 && (
+              {courseInfo.methodology && courseInfo.methodology.length > 0 && (
                 <motion.div variants={itemVariants} className="course-section-card">
                   <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '1.5rem', fontWeight: 700 }}>Metodología</h2>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -1062,20 +1103,22 @@ const CourseDetailsPage = ({ courseId }) => {
               )}
 
               {/* Requirements */}
-              <motion.div variants={itemVariants} className="course-section-card">
-                <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '1.5rem', fontWeight: 700 }}>¿Qué necesitas para tomar el curso?</h2>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {courseInfo.requirements.map((req, idx) => (
-                    <li key={idx} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                      <CheckCircle size={20} color="var(--accent)" style={{ marginTop: '0.2rem' }} />
-                      <span style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.6' }}>{req}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
+              {courseInfo.requirements && courseInfo.requirements.length > 0 && (
+                <motion.div variants={itemVariants} className="course-section-card">
+                  <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '1.5rem', fontWeight: 700 }}>¿Qué necesitas para tomar el curso?</h2>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {courseInfo.requirements.map((req, idx) => (
+                      <li key={idx} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        <CheckCircle size={20} color="var(--accent)" style={{ marginTop: '0.2rem' }} />
+                        <span style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.6' }}>{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
 
               {/* Tools */}
-              {courseInfo.tools.length > 0 && (
+              {courseInfo.tools && courseInfo.tools.length > 0 && (
                 <motion.div variants={itemVariants} style={{ marginBottom: '3rem' }}>
                   <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '1.5rem', fontWeight: 700 }}>Herramientas utilizadas</h2>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
@@ -1089,44 +1132,70 @@ const CourseDetailsPage = ({ courseId }) => {
               )}
 
               {/* Syllabus / Temario */}
-              <motion.div variants={itemVariants} style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '1.5rem', fontWeight: 700 }}>Temario del curso</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {modules.map((mod, i) => (
-                    <div key={i} style={{ background: 'rgba(13, 20, 36, 0.6)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-                      <button
-                        onClick={() => setActiveModule(activeModule === i ? null : i)}
-                        style={{ width: '100%', padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', border: 'none', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}
-                      >
-                        {mod.title}
-                        <span style={{ transform: activeModule === i ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease', color: 'var(--primary)' }}>
-                          <ChevronRight size={20} />
-                        </span>
-                      </button>
-                      <AnimatePresence>
-                        {activeModule === i && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', color: 'var(--text-muted)', lineHeight: '1.8', whiteSpace: 'pre-line' }}>
-                              {mod.content}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
+              {courseInfo.modules && courseInfo.modules.length > 0 && (
+                <motion.div variants={itemVariants} style={{ marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '1.5rem', fontWeight: 700 }}>Temario del curso</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {courseInfo.modules.map((mod, i) => (
+                      <div key={i} style={{ background: 'rgba(13, 20, 36, 0.6)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+                        <button
+                          onClick={() => setActiveModule(activeModule === i ? null : i)}
+                          style={{ width: '100%', padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', border: 'none', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}
+                        >
+                          {mod.title}
+                          <span style={{ transform: activeModule === i ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease', color: 'var(--primary)' }}>
+                            <ChevronRight size={20} />
+                          </span>
+                        </button>
+                        <AnimatePresence>
+                          {activeModule === i && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', color: 'var(--text-muted)', lineHeight: '1.8', whiteSpace: 'pre-line' }}>
+                                {mod.content}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
             </div>
 
             {/* Right Column: Pricing Sticky Card */}
             <motion.div variants={itemVariants} className="pricing-sticky-card">
               <div className="pricing-sticky-inner">
+                {isLive ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', padding: '0.4rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 auto 1rem auto', width: 'fit-content', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                    <motion.span 
+                      animate={{ opacity: [1, 0.2, 1] }} 
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
+                      <Video size={16} />
+                    </motion.span>
+                    CLASES EN VIVO
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--accent)', padding: '0.4rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 auto 1rem auto', width: 'fit-content', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
+                    <motion.span 
+                      animate={{ scale: [1, 1.05, 1] }} 
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
+                      <Clock size={16} />
+                    </motion.span>
+                    CURSO GRABADO
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', marginBottom: 'clamp(0.5rem, 2vh, 1.5rem)' }}>
                   <span style={{ background: 'var(--primary)', color: 'white', padding: '0.3rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{courseInfo.discount}</span>
                   <span style={{ color: 'var(--text-muted)', fontSize: '1rem', textDecoration: 'line-through' }}>{courseInfo.regularPrice}</span>
@@ -1134,20 +1203,20 @@ const CourseDetailsPage = ({ courseId }) => {
 
                 <div className="pricing-price">{courseInfo.salePrice}</div>
 
-                <a href="https://wa.me/51983029039" target="_blank" rel="noopener noreferrer" className="btn btn-primary pricing-btn btn-glow">
-                  <MessageCircle size={20} /> Comprar ahora
+                <a href={`https://wa.me/51983029039?text=${encodeURIComponent(`Hola Canal Ejecutivo quiero separar mi vacante para el curso de ${courseInfo.title}`)}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary pricing-btn btn-glow">
+                  <MessageCircle size={20} /> Separar mi vacante
                 </a>
 
-                <a href="https://wa.me/51983029039" target="_blank" rel="noopener noreferrer" className="pricing-btn-secondary">
+                <a href={`https://wa.me/51983029039?text=${encodeURIComponent(`Hola Canal Ejecutivo, quiero mayor información del curso ${courseInfo.title}`)}`} target="_blank" rel="noopener noreferrer" className="pricing-btn-secondary">
                   <MessageCircle size={18} /> Contacta a un asesor
                 </a>
 
-                {/* Benefits List (Moved to right column) */}
+                {/* Benefits List */}
                 <div className="pricing-benefits">
                   <ul className="pricing-benefits-list">
                     {[
                       { icon: <MessageCircle size={18} />, text: 'Soporte constante' },
-                      { icon: <Target size={18} />, text: 'Refuerzo en vivo' },
+                      { icon: <Target size={18} />, text: isLive ? 'Refuerzo en vivo' : 'Acceso de por vida' },
                       { icon: <Award size={18} />, text: 'Certificado Internacional con QR' },
                       { icon: <ShieldCheck size={18} />, text: 'Garantía de aprendizaje' }
                     ].map((benefit, i) => (
@@ -1171,9 +1240,379 @@ const CourseDetailsPage = ({ courseId }) => {
   );
 };
 
+const ProgramasEnVivoPage = () => {
+  const liveCourses = coursesData.filter(course => !course.modality.includes('Grabado'));
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  };
+
+  return (
+    <>
+      <Header activePage="envivo" />
+      <div style={{ minHeight: '100vh', paddingTop: '140px', paddingBottom: '80px', background: '#070b14', position: 'relative' }}>
+        <div className="hero-bg-glow" style={{ top: '10%', left: '-10%', width: '500px', height: '500px', opacity: 0.15 }}></div>
+        
+        <div className="container">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            style={{ textAlign: 'center', marginBottom: '4rem' }}
+          >
+            <span style={{
+              background: 'rgba(10, 102, 255, 0.1)',
+              color: 'var(--accent)',
+              padding: '0.5rem 1.5rem',
+              borderRadius: '99px',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              border: '1px solid rgba(10, 102, 255, 0.3)',
+              display: 'inline-block',
+              marginBottom: '1.5rem'
+            }}>
+              Clases Virtuales en Tiempo Real
+            </span>
+            <h1 style={{ fontSize: '3.5rem', fontWeight: 800, color: 'white', marginBottom: '1.5rem' }}>
+              Programas <span className="text-primary">En Vivo</span>
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '700px', margin: '0 auto' }}>
+              Interactúa directamente con ponentes expertos y profesionales de la región a través de videoconferencias en vivo por Meet.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="courses-grid"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {liveCourses.map((course, i) => (
+              <motion.div key={i} className="course-card" variants={itemVariants}>
+                <div className="course-image-wrapper">
+                  <span className={`course-badge ${course.badgeClass}`}>{course.category}</span>
+                  <img src={course.img} alt={course.title} className="course-image" loading="lazy" />
+                </div>
+                <div className="course-content">
+                  <h3 className="course-title">{course.title}</h3>
+                  <div className="course-meta-grid" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    <div className="course-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Calendar size={14} className="course-meta-icon" />
+                      <span>{course.date}</span>
+                    </div>
+                    <div className="course-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Video size={14} className="course-meta-icon" />
+                      <span>{course.modality}</span>
+                    </div>
+                  </div>
+                  <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                    <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '1rem' }}>{course.regularPrice}</span>
+                    <span style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '1.4rem' }}>{course.salePrice}</span>
+                  </div>
+                  <a href={`#curso-${course.id}`} className="btn btn-primary course-btn-primary" style={{ width: '100%', display: 'inline-block', textAlign: 'center' }}>
+                    VER DETALLES DEL CURSO
+                  </a>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+};
+
+const COURSES_PER_PAGE = 12;
+
+const ProgramasAsincronicosPage = () => {
+  const allAsyncCourses = coursesData.filter(course => course.modality.includes('Grabado'));
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Extract unique categories
+  const categories = [...new Set(allAsyncCourses.map(c => c.category))];
+
+  // Filter by category and search
+  const filteredCourses = allAsyncCourses.filter(c => {
+    const matchesCategory = selectedCategory === 'all' || c.category === selectedCategory;
+    const matchesSearch = searchQuery.trim() === '' || 
+      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredCourses.length / COURSES_PER_PAGE);
+  const startIdx = (currentPage - 1) * COURSES_PER_PAGE;
+  const paginatedCourses = filteredCourses.slice(startIdx, startIdx + COURSES_PER_PAGE);
+
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedCategory('all');
+    setSearchQuery('');
+    setCurrentPage(1);
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 25 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+  };
+
+  // Render star rating
+  const renderStars = (rating) => {
+    const stars = [];
+    const full = Math.floor(rating);
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <span key={i} className="star" style={{ opacity: i < full ? 1 : 0.3 }}>★</span>
+      );
+    }
+    return stars;
+  };
+
+  return (
+    <>
+      <Header activePage="asincronicos" />
+      <div className="async-catalog">
+        <div className="hero-bg-glow" style={{ top: '5%', left: '-10%', width: '500px', height: '500px', opacity: 0.12 }}></div>
+        <div className="hero-bg-glow" style={{ top: '40%', right: '-10%', width: '400px', height: '400px', opacity: 0.08, background: 'radial-gradient(circle, rgba(56,189,248,0.4), transparent 70%)' }}></div>
+
+        <div className="container">
+          {/* Header */}
+          <motion.div
+            className="async-catalog-header"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span style={{
+              background: 'rgba(56, 189, 248, 0.1)',
+              color: 'var(--accent)',
+              padding: '0.5rem 1.5rem',
+              borderRadius: '99px',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              display: 'inline-block',
+              marginBottom: '1rem'
+            }}>
+              📚 Estudia a tu Propio Ritmo
+            </span>
+            <h1>
+              Cursos <span className="text-accent">Online</span>
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
+              Accede a contenido grabado de alta calidad y estudia cuando quieras, donde quieras.
+            </p>
+          </motion.div>
+
+          {/* Filter Bar */}
+          <motion.div
+            className="async-filter-bar"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="async-filter-select">
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+              >
+                <option value="all">Ver todas las categorías</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="async-filter-search">
+              <Search size={16} />
+              <input
+                type="text"
+                placeholder="Buscar curso..."
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              />
+            </div>
+
+            {(selectedCategory !== 'all' || searchQuery.trim() !== '') && (
+              <button className="async-filter-reset" onClick={handleResetFilters}>
+                Restablecer filtros
+              </button>
+            )}
+          </motion.div>
+
+          {/* Pagination Info */}
+          <motion.div
+            className="async-pagination-info"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <span>Pag {currentPage} de {totalPages || 1}</span>
+            <button
+              className="pagination-arrow"
+              onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
+              disabled={currentPage >= totalPages}
+              style={{
+                width: '32px', height: '32px', borderRadius: '50%',
+                background: 'var(--primary)', border: 'none', color: 'white',
+                cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: currentPage >= totalPages ? 0.3 : 1,
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <ChevronRight size={16} />
+            </button>
+          </motion.div>
+
+          {/* Courses Grid - 4 columns */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${selectedCategory}-${currentPage}`}
+              className="async-courses-grid"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0 }}
+            >
+              {paginatedCourses.length > 0 ? (
+                paginatedCourses.map((course) => (
+                  <motion.a
+                    key={course.id}
+                    href={`#curso-${course.id}`}
+                    className="async-card"
+                    variants={itemVariants}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    {/* Image with play button */}
+                    <div className="async-card-img-wrapper">
+                      <img src={course.img} alt={course.title} loading="lazy" />
+                      <div className="async-card-play">
+                        <Play size={22} fill="white" />
+                      </div>
+                    </div>
+
+                    {/* Body */}
+                    <div className="async-card-body">
+                      {/* Category badge */}
+                      <div className="async-card-category-row">
+                        <span className={`async-card-badge ${course.badgeClass}`}>{course.category}</span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="async-card-title">{course.title}</h3>
+
+                      {/* Meta: duration, rating, students */}
+                      <div className="async-card-meta">
+                        <div className="async-card-meta-item">
+                          <Clock size={13} />
+                          <span>{course.duration}</span>
+                        </div>
+                        <div className="async-card-rating">
+                          <span className="rating-value">{course.rating || '4.5'}</span>
+                          {renderStars(course.rating || 4.5)}
+                        </div>
+                        <div className="async-card-meta-item">
+                          <Users size={13} />
+                          <span>{course.students}</span>
+                        </div>
+                      </div>
+
+                      {/* Pricing */}
+                      <div className="async-card-pricing">
+                        <div>
+                          <span className="original-price">{course.regularPrice}</span>
+                          {' '}
+                          <span className="discount-tag">{course.discount}</span>
+                        </div>
+                        <div className="sale-price">
+                          <span className="price-value">
+                            <ShoppingCart size={14} />
+                            {course.salePrice}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.a>
+                ))
+              ) : (
+                <div className="async-no-results">
+                  <h3>No se encontraron cursos</h3>
+                  <p>Intenta con otra categoría o restablece los filtros.</p>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <motion.div
+              className="async-pagination"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <button
+                className="pagination-arrow"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  className={currentPage === page ? 'active' : ''}
+                  onClick={() => goToPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                className="pagination-arrow"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+              >
+                <ChevronRight size={18} />
+              </button>
+            </motion.div>
+          )}
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+}
+
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.hash);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -1238,6 +1677,18 @@ function App() {
     return <><TermsPage /><ScrollToTop /><WhatsAppFloat /></>;
   } else if (currentPath === '#nosotros') {
     return <><NosotrosPage /><ScrollToTop /><WhatsAppFloat /></>;
+  } else if (currentPath === '#programas-envivo') {
+    return <><ProgramasEnVivoPage /><ScrollToTop /><WhatsAppFloat /></>;
+  } else if (currentPath === '#programas-asincronicos') {
+    return <><ProgramasAsincronicosPage /><ScrollToTop /><WhatsAppFloat /></>;
+  } else if (currentPath === '#escuelas') {
+    return <><Header activePage="escuelas" isScrolledExternal={true} /><EscuelasPage /><Footer /><ScrollToTop /><WhatsAppFloat /></>;
+  } else if (currentPath === '#escuela-ia') {
+    return <><Header activePage="escuelas" isScrolledExternal={true} /><EscuelaIAPage /><Footer /><ScrollToTop /><WhatsAppFloat /></>;
+  } else if (currentPath === '#escuela-redes') {
+    return <><Header activePage="escuelas" isScrolledExternal={true} /><EscuelaRedesPage /><Footer /><ScrollToTop /><WhatsAppFloat /></>;
+  } else if (currentPath === '#escuela-ejecutivo') {
+    return <><Header activePage="escuelas" isScrolledExternal={true} /><EscuelaEjecutivoPage /><Footer /><ScrollToTop /><WhatsAppFloat /></>;
   } else if (currentPath.startsWith('#curso-')) {
     return <><CourseDetailsPage courseId={currentPath.replace('#curso-', '')} /><ScrollToTop /><WhatsAppFloat /></>;
   }
@@ -1263,23 +1714,7 @@ function App() {
         {isLoading && <LoadingScreen onFinish={() => setIsLoading(false)} />}
       </AnimatePresence>
 
-      <header style={{ background: isScrolled ? 'rgba(7, 11, 20, 0.9)' : 'transparent', boxShadow: isScrolled ? '0 4px 20px rgba(0,0,0,0.5)' : 'none' }}>
-        <div className="container nav-container">
-          <div className="logo">
-            <img src="/logo.png" alt="Canal Ejecutivo" style={{ height: '40px', objectFit: 'contain' }} />
-          </div>
-          <nav className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-            <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
-            <a href="#cursos" onClick={() => setMobileMenuOpen(false)}>Cursos</a>
-            <a href="#aliados" onClick={() => setMobileMenuOpen(false)}>Aliados</a>
-            <a href="#testimonios" onClick={() => setMobileMenuOpen(false)}>Testimonios</a>
-            <a href="https://campus.canalejecutivo.com/" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '0.5rem 1.2rem' }}>Aula virtual</a>
-          </nav>
-          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </header>
+      <Header activePage="inicio" isScrolledExternal={isScrolled} />
 
       {/* Hero Section */}
       <section className="hero">
@@ -1437,50 +1872,27 @@ function App() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
           >
-            {[
-              {
-                id: 'admin-windows-server',
-                title: 'ADMINISTRACIÓN DE WINDOWS SERVER 2019',
-                category: 'Estrategia & Analytics',
-                badgeClass: 'course-badge-strategy',
-                date: 'Inicia: 17 de junio',
-                duration: '48 Horas',
-                img: '/servidor-e1557165670831.jpg'
-              },
-              {
-                id: 'crea-dashboard-ia',
-                title: 'CREA DASHBOARD PROFESIONALES CON IA',
-                category: 'Tecnología & IA',
-                badgeClass: 'course-badge-tech',
-                date: 'Inicia: 18 de junio',
-                duration: '32 Horas',
-                img: '/dasboarhimagen.png'
-              },
-              {
-                id: 'habilidades-alto-impacto',
-                title: 'HABILIDADES DE ALTO IMPACTO',
-                category: 'Alta Dirección',
-                badgeClass: 'course-badge-leadership',
-                date: 'Inicia: 19 de junio',
-                duration: '24 Horas',
-                img: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800'
-              }
-            ].map((course, i) => (
+            {coursesData.filter(course => !course.modality.includes('Grabado')).map((course, i) => (
               <motion.div key={i} className="course-card" variants={fadeUpVariant}>
                 <div className="course-image-wrapper">
+                  <span className={`course-badge ${course.badgeClass}`}>{course.category}</span>
                   <img src={course.img} alt={course.title} className="course-image" loading="lazy" />
                 </div>
                 <div className="course-content">
                   <h3 className="course-title">{course.title}</h3>
-                  <div className="course-meta-grid">
-                    <div className="course-meta-item">
+                  <div className="course-meta-grid" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    <div className="course-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Calendar size={14} className="course-meta-icon" />
                       <span>{course.date}</span>
                     </div>
+                    <div className="course-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Video size={14} className="course-meta-icon" />
+                      <span>{course.modality}</span>
+                    </div>
                   </div>
                   <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                    <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '1rem' }}>S/ 200</span>
-                    <span style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '1.4rem' }}>S/ 100</span>
+                    <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '1rem' }}>{course.regularPrice}</span>
+                    <span style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '1.4rem' }}>{course.salePrice}</span>
                   </div>
                   <a href={`#curso-${course.id}`} className="btn btn-primary course-btn-primary" style={{ width: '100%', display: 'inline-block', textAlign: 'center' }}>VER DETALLES DEL CURSO</a>
                 </div>
