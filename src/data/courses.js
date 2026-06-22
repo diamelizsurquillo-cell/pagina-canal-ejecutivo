@@ -52,7 +52,7 @@ export const coursesData = [
     badgeClass: 'course-badge-tech',
     date: 'Acceso inmediato',
     startDate: 'Acceso inmediato',
-    duration: '32 Horas',
+    duration: '6.5 Horas',
     img: '/dasboarhimagen.png',
     description: 'Domina la creación de dashboards profesionales con Inteligencia Artificial y transforma datos en decisiones estratégicas. En este curso aprenderás a diseñar paneles modernos, visuales e interactivos aplicados a entornos corporativos reales, utilizando herramientas actuales y automatización con IA.',
     instructor: 'Jeferson Dilas',
@@ -64,7 +64,7 @@ export const coursesData = [
     schedule: 'Flexible',
     sessions: 'Grabado - 3 sesiones',
     frequency: 'A tu propio ritmo',
-    modality: 'Grabado - Aula Virtual',
+    modality: 'Grabado - Asincrónico',
     methodology: [],
     requirements: [
       'Conexión a internet estable para acceder al campus virtual.',

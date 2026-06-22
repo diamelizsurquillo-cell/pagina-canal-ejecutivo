@@ -122,7 +122,7 @@ const CourseDetailsPage = ({ courseId }) => {
                     <Video size={20} color="var(--accent)" />
                     <div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Modalidad</div>
-                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.modality}</div>
+                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.modality.replace('Grabado - ', '')}</div>
                     </div>
                   </div>
                 </div>

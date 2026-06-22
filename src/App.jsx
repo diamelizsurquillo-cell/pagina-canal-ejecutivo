@@ -1127,7 +1127,7 @@ const CourseDetailsPage = ({ courseId }) => {
                     <Video size={20} color="var(--accent)" />
                     <div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Modalidad</div>
-                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.modality}</div>
+                      <div style={{ color: 'white', fontWeight: 600 }}>{courseInfo.modality.replace('Grabado - ', '')}</div>
                     </div>
                   </div>
                 </div>
@@ -1356,7 +1356,7 @@ const ProgramasEnVivoPage = () => {
                     </div>
                     <div className="course-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Video size={14} className="course-meta-icon" />
-                      <span>{course.modality}</span>
+                      <span>{course.modality.replace('Grabado - ', '')}</span>
                     </div>
                   </div>
                   <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
@@ -1935,7 +1935,7 @@ function App() {
                     </div>
                     <div className="course-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Video size={14} className="course-meta-icon" />
-                      <span>{course.modality}</span>
+                      <span>{course.modality.replace('Grabado - ', '')}</span>
                     </div>
                   </div>
                   <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
