@@ -47,7 +47,7 @@ export const coursesData = [
   },
   {
     id: 'crea-dashboard-ia',
-    title: 'CREA DASHBOARD PROFESIONALES CON IA',
+    title: 'DASHBOARD CON INTELIGENCIA ARTIFICIAL',
     category: 'Tecnología & IA',
     badgeClass: 'course-badge-tech',
     date: 'Inicia: 18 de junio',

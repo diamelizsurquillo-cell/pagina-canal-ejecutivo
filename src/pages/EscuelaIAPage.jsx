@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { coursesData } from '../data/courses';
 import { 
   Brain, Bot, Sparkles, TrendingUp, Globe, 
   Lightbulb, BarChart3, Layers, Rocket, ChevronRight,
@@ -48,6 +49,8 @@ const perfilItems = [
 ];
 
 const EscuelaIAPage = () => {
+  const course = coursesData.find(c => c.id === 'crea-dashboard-ia');
+
   return (
     <motion.div
       initial="hidden"
@@ -167,6 +170,133 @@ const EscuelaIAPage = () => {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cursos Section */}
+      <section className="escuela-detail-section" style={{ paddingBottom: '3rem' }}>
+        <div className="container">
+          <motion.div variants={itemVariants} className="text-center" style={{ marginBottom: '4rem' }}>
+            <h2 className="escuela-section-title">
+              Programas <span style={{ color: '#00e5ff' }}>Disponibles</span>
+            </h2>
+            <p className="escuela-section-subtitle">
+              Inicia tu formación hoy mismo con nuestros cursos especializados con certificación internacional.
+            </p>
+          </motion.div>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {course && (
+              <motion.div
+                variants={itemVariants}
+                className="course-card"
+                style={{
+                  width: '100%',
+                  maxWidth: '420px',
+                  background: 'rgba(7, 11, 20, 0.4)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(0, 229, 255, 0.15)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+                whileHover={{ y: -8, borderColor: 'rgba(0, 229, 255, 0.4)', boxShadow: '0 12px 40px rgba(0, 229, 255, 0.15)' }}
+              >
+                <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
+                  <span style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    left: '1rem',
+                    background: 'linear-gradient(135deg, #00e5ff 0%, #0a66ff 100%)',
+                    color: 'white',
+                    padding: '0.4rem 1rem',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    zIndex: 2,
+                    boxShadow: '0 4px 12px rgba(0, 229, 255, 0.3)'
+                  }}>
+                    {course.category}
+                  </span>
+                  <img 
+                    src={course.img} 
+                    alt={course.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    background: 'linear-gradient(to top, rgba(7, 11, 20, 0.95), transparent)',
+                    height: '60px',
+                    zIndex: 1
+                  }}></div>
+                </div>
+
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem', flex: 1, justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: '#94a3b8' }}>
+                      <span>📅 {course.date}</span>
+                      <span>⏱️ {course.duration}</span>
+                    </div>
+
+                    <h3 style={{ fontSize: '1.35rem', fontWeight: 'bold', color: 'white', lineHeight: '1.4', margin: 0 }}>
+                      {course.title}
+                    </h3>
+
+                    <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
+                      {course.description}
+                    </p>
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: '1.2rem',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                    marginTop: '1.5rem'
+                  }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#64748b', textDecoration: 'line-through' }}>
+                        {course.regularPrice}
+                      </span>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00e5ff' }}>
+                        {course.salePrice}
+                      </span>
+                    </div>
+                    <a 
+                      href={`#curso-${course.id}`} 
+                      className="btn btn-secondary"
+                      style={{
+                        padding: '0.6rem 1.2rem',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        transition: 'all 0.3s ease',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      Ver Detalles
+                      <ChevronRight size={16} />
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
       </section>
