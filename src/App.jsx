@@ -76,6 +76,7 @@ const Header = ({ activePage, isScrolledExternal }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolledInternal, setIsScrolledInternal] = useState(false);
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState(false);
+  const [mobileEscuelasOpen, setMobileEscuelasOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,13 +157,60 @@ const Header = ({ activePage, isScrolledExternal }) => {
             </div>
           </div>
 
-          <a 
-            href="#escuelas" 
-            className={activePage === 'escuelas' ? 'active' : ''} 
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Escuelas
-          </a>
+          {/* Dropdown for Escuelas */}
+          <div className="nav-dropdown">
+            <button 
+              className={`nav-dropdown-trigger ${activePage === 'escuelas' ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileEscuelasOpen(!mobileEscuelasOpen);
+              }}
+            >
+              Escuelas <ChevronDown size={14} />
+            </button>
+            <div className={`nav-dropdown-menu ${mobileEscuelasOpen ? 'mobile-show' : ''}`}>
+              <a 
+                href="#escuelas" 
+                className={activePage === 'escuelas' && (window.location.hash === '#escuelas' || window.location.hash === '') ? 'active' : ''} 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setMobileEscuelasOpen(false);
+                }}
+              >
+                Todas las Escuelas
+              </a>
+              <a 
+                href="#escuela-ia" 
+                className={activePage === 'escuelas' && window.location.hash === '#escuela-ia' ? 'active' : ''} 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setMobileEscuelasOpen(false);
+                }}
+              >
+                Inteligencia Artificial
+              </a>
+              <a 
+                href="#escuela-redes" 
+                className={activePage === 'escuelas' && window.location.hash === '#escuela-redes' ? 'active' : ''} 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setMobileEscuelasOpen(false);
+                }}
+              >
+                Redes y Electrónica
+              </a>
+              <a 
+                href="#escuela-ejecutivo" 
+                className={activePage === 'escuelas' && window.location.hash === '#escuela-ejecutivo' ? 'active' : ''} 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setMobileEscuelasOpen(false);
+                }}
+              >
+                Desarrollo Ejecutivo
+              </a>
+            </div>
+          </div>
 
           <a href="#aliados" onClick={() => setMobileMenuOpen(false)}>Aliados</a>
           <a href="#testimonios" onClick={() => setMobileMenuOpen(false)}>Testimonios</a>
